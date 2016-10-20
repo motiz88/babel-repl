@@ -10,7 +10,7 @@ import _ from "lodash";
 import "./App.css";
 
 const INIT = `class X {
-	foo: string = 'bar'
+  foo: string = 'bar'
 }`;
 
 class App extends Component {
@@ -27,51 +27,51 @@ class App extends Component {
     const { options } = this.state;
 
     return (
-			<div className="repl">
-				{this.state.showConfig && (
-					<dialog open={true} className="dialog">
-						<button onClick={this.hideConfig}>Close</button>
-						<pre>{this.generateConfig()}</pre>
-					</dialog>
-				)}
+      <div className="repl">
+        {this.state.showConfig && (
+          <dialog open={true} className="dialog">
+            <button onClick={this.hideConfig}>Close</button>
+            <pre>{this.generateConfig()}</pre>
+          </dialog>
+        )}
 
-				<div className="repl-options">
-					<button onClick={this.showConfig}>Gen</button>
-					<h3>Presets</h3>
-					<SelectableList
-						items={PRESET_NAMES}
-						selected={this.state.presets}
-						disabled={presets.reduce((carry, curr) => {
-  return [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ];
-}, [])}
-						onItemToggle={this.togglePreset}
-						options={options}
-						onOptionToggle={this.togglePresetOption}
-						onOptionChange={this.handlePresetOptionChanged}
-					/>
+        <div className="repl-options">
+          <button onClick={this.showConfig}>Gen</button>
+          <h3>Presets</h3>
+          <SelectableList
+            items={PRESET_NAMES}
+            selected={this.state.presets}
+            disabled={presets.reduce((carry, curr) => (
+              [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
+            ), [])}
+            onItemToggle={this.togglePreset}
+            options={options}
+            onOptionToggle={this.togglePresetOption}
+            onOptionChange={this.handlePresetOptionChanged}
+          />
 
-					<h3>Plugins</h3>
-					<SelectableList
-						items={PLUGINS}
-						selected={this.state.plugins}
-						disabled={presets.reduce((carry, curr) => {
-  return [ ...carry, ...PRESETS[curr] ];
-}, [])}
-						onItemToggle={this.togglePlugin}
-						options={options}
-					/>
-				</div>
+          <h3>Plugins</h3>
+          <SelectableList
+            items={PLUGINS}
+            selected={this.state.plugins}
+            disabled={presets.reduce((carry, curr) => (
+              [ ...carry, ...PRESETS[curr] ]
+            ), [])}
+            onItemToggle={this.togglePlugin}
+            options={options}
+          />
+        </div>
 
-				<Repl
-					code={this.state.code}
-					presets={presets}
-					plugins={plugins}
-					options={options}
-					onChange={(code) => this.setState({ code })}
-				/>
+        <Repl
+          code={this.state.code}
+          presets={presets}
+          plugins={plugins}
+          options={options}
+          onChange={(code) => this.setState({ code })}
+        />
 
-			</div>
-		);
+      </div>
+    );
   }
 
   selectedPresets() {
