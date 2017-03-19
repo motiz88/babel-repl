@@ -15,7 +15,7 @@
   "dependencies": {
     "brace": "^0.10.0",
     "lodash": "^4.16.4",
-    "pretty-format": "^4.2.1",
+    "pretty-format": "^19.0.0",
     "react": "^15.3.2",
     "react-ace": "^4.1.6",
     "react-dom": "^15.3.2"
