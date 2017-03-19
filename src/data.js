@@ -6,7 +6,6 @@ export const PLUGINS = Object.keys(Babel.availablePlugins);
 export const PRESETS = {};
 
 for (const key of Object.keys(Babel.availablePresets)) {
-  console.log(key, Babel.availablePresets[key]);
   const preset = Babel.availablePresets[key];
   PRESETS[key] = getPresetPlugins(preset);
 }
