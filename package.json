@@ -10,14 +10,14 @@
     "eslint-config-babel": "^2.0.1",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flowtype": "^2.20.0",
-    "react-scripts": "0.6.0"
+    "react-scripts": "^0.9.5"
   },
   "dependencies": {
-    "brace": "^0.8.0",
+    "brace": "^0.10.0",
     "lodash": "^4.16.4",
     "pretty-format": "^4.2.1",
     "react": "^15.3.2",
-    "react-ace": "^3.6.0",
+    "react-ace": "^4.1.6",
     "react-dom": "^15.3.2"
   },
   "scripts": {
