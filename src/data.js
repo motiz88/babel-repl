@@ -10,13 +10,8 @@ for (const key of Object.keys(Babel.availablePresets)) {
   PRESETS[key] = getPresetPlugins(preset);
 }
 
-export const CONTAINING_PRESETS = {
-  "stage-0": ["stage-1", "stage-2", "stage-3"],
-  "stage-1": ["stage-2", "stage-3"],
-  "stage-2": ["stage-3"],
-  "latest": ["es2015", "es2016", "es2017"],
-};
 
+export const CONTAINING_PRESETS = getContainingPresets(Babel);
 export const PRESET_NAMES = Object.keys(PRESETS);
 
 export const VERSION = Babel.version;
@@ -38,4 +33,52 @@ function getPresetPlugins (preset) {
     return getPresetPlugins(preset());
   }
   return [];
+}
+
+function getContainingPresets (Babel) {
+  const { availablePresets } = Babel;
+  const presetInverseMap = new Map();
+  for (const key of Object.keys(availablePresets)) {
+    const preset = availablePresets[key];
+    presetInverseMap.set(key, key);
+    presetInverseMap.set(preset, key);
+    if (preset.buildPreset) {
+      presetInverseMap.set(String(preset.buildPreset), key);
+    }
+  }
+  const getContainedPresets = (preset, cache) => {
+    if (!cache) {
+      cache = new Map();
+    }
+    if (cache.has(preset)) {
+      return cache.get(preset);
+    }
+    if (typeof preset === 'function') {
+      preset = preset();
+    }
+    if (!preset || typeof preset !== 'object' || !preset.presets) {
+      return [];
+    }
+    const result = [];
+    for (const base of preset.presets) {
+      const basePreset = Array.isArray(base) ? base[0] : base;
+      const key = presetInverseMap.get(basePreset) || presetInverseMap.get(String(basePreset));
+      if (!key) {
+        continue;
+      }
+      result.push(key);
+      result.push(...getContainedPresets(basePreset, cache));
+    }
+    cache.set(preset, result);
+    return result;
+  };
+  const CONTAINING_PRESETS = {};
+  for (const key of Object.keys(availablePresets)) {
+    const preset = availablePresets[key];
+    const contained = getContainedPresets(preset);
+    if (contained.length) {
+      CONTAINING_PRESETS[key] = contained;
+    }
+  }
+  return CONTAINING_PRESETS;
 }
