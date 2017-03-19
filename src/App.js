@@ -3,32 +3,30 @@
 import React, { Component } from "react";
 import DocumentTitle from "react-document-title";
 import SelectableList from "./SelectableList";
+import GroupedSelectableList from "./GroupedSelectableList";
 import Repl from "./Repl";
 import persistence from "./persistence";
 import mergeOptions from "./mergeOptions";
-import { PRESETS, PLUGINS, PRESET_NAMES, CONTAINING_PRESETS, VERSION } from "./data";
+import { PRESETS, PRESET_NAMES, CONTAINING_PRESETS, VERSION, PLUGIN_GROUPS } from "./data";
 import _ from "lodash";
 import "./App.css";
-
-const INIT = `class X {
-  foo: string = 'bar'
-}`;
+import { connect } from "react-redux";
+import { setCode, setEvaluate } from "./state/repl/actions";
+import { setWrap, setFilter } from "./state/ui/actions";
 
 class App extends Component {
   state = {
     presets: {},
     plugins: {},
-    code: INIT,
     options: {},
-    version: VERSION,
-    evaluate: true,
-    wrap: true
+    version: VERSION
   }
 
   render() {
     const presets = this.selectedPresets();
     const plugins = this.selectedPlugins();
-    const { options, wrap, evaluate, version } = this.state;
+    const { code, wrap, evaluate, setCode, filter } = this.props;
+    const { options, version } = this.state;
 
     return (
       <DocumentTitle title={`Babel ${version} REPL`}>
@@ -39,61 +37,79 @@ class App extends Component {
               <pre>{this.generateConfig()}</pre>
             </dialog>
           )}
-
-          <div className="repl-options">
-            <button onClick={this.showConfig}>Gen</button>
-            <div>
-              <input
-                type="checkbox"
-                checked={evaluate}
-                onChange={this.handleEvaluateChanged}
-              />
-              Evaluate
-            </div>
-            <div>
-              <input
-                type="checkbox"
-                checked={wrap}
-                onChange={this.handleWrapChanged}
-              />
-              Wrap
-            </div>
+          <div className="repl-top-bar">
+            <ul className="repl-top-options">
+              <li>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={evaluate}
+                    onChange={this.handleEvaluateChanged}
+                  />
+                  Evaluate
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={wrap}
+                    onChange={this.handleWrapChanged}
+                  />
+                  Line Wrap
+                </label>
+              </li>
+            </ul>
             <h3>Babel {version}</h3>
-            <h3>Presets</h3>
-            <SelectableList
-              items={PRESET_NAMES}
-              selected={this.state.presets}
-              disabled={presets.reduce((carry, curr) => (
-                [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
-              ), [])}
-              onItemToggle={this.togglePreset}
-              options={options}
-              onOptionToggle={this.togglePresetOption}
-              onOptionChange={this.handlePresetOptionChanged}
-            />
+          </div>
+          <div className="repl-horiz">
+            <div className="repl-options">
+              <button onClick={this.showConfig}>Gen</button>
+              <input
+                type="text"
+                value={filter}
+                onChange={this.handleFilterChanged}
+                className="filter-input"
+                placeholder="Filter..."
+                onKeyUp={this.handleFilterKeyUp}
+              />
+              <h3>Presets</h3>
+              <SelectableList
+                items={PRESET_NAMES}
+                selected={this.state.presets}
+                disabled={presets.reduce((carry, curr) => (
+                  [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
+                ), [])}
+                onItemToggle={this.togglePreset}
+                options={options}
+                onOptionToggle={this.togglePresetOption}
+                onOptionChange={this.handlePresetOptionChanged}
+                filter={filter}
+              />
 
-            <h3>Plugins</h3>
-            <SelectableList
-              items={PLUGINS}
-              selected={this.state.plugins}
-              disabled={presets.reduce((carry, curr) => (
-                [ ...carry, ...PRESETS[curr] ]
-              ), [])}
-              onItemToggle={this.togglePlugin}
+              <h3>Plugins</h3>
+              <GroupedSelectableList
+                groups={PLUGIN_GROUPS}
+                selected={this.state.plugins}
+                disabled={presets.reduce((carry, curr) => (
+                  [ ...carry, ...PRESETS[curr] ]
+                ), [])}
+                onItemToggle={this.togglePlugin}
+                options={options}
+                filter={filter}
+              />
+            </div>
+
+            <Repl
+              code={code}
+              presets={presets}
+              plugins={plugins}
               options={options}
+              evaluate={evaluate}
+              wrap={wrap}
+              onChange={setCode}
             />
           </div>
-
-          <Repl
-            code={this.state.code}
-            presets={presets}
-            plugins={plugins}
-            options={options}
-            evaluate={evaluate}
-            wrap={wrap}
-            onChange={(code) => this.setState({ code })}
-          />
-
         </div>
       </DocumentTitle>
     );
@@ -117,7 +133,7 @@ class App extends Component {
 
   xcomponentDidUpdate() {
     persistence.save({
-      code: this.state.code,
+      code: this.props.code,
       presets: this.presets,
       babili: false, // TODO
       lineWrap: false, // TODO
@@ -190,12 +206,32 @@ class App extends Component {
   }
 
   handleEvaluateChanged = (event) => {
-    this.setState({ evaluate: event.target.checked });
+    this.props.setEvaluate( event.target.checked );
   }
 
   handleWrapChanged = (event) => {
-    this.setState({ wrap: event.target.checked });
+    this.props.setWrap( event.target.checked );
+  }
+
+  handleFilterChanged = (event) => {
+    this.props.setFilter( event.target.value );
+  }
+
+  handleFilterKeyUp = (event) => {
+    if (event.keyCode === 27 /* esc */) {
+      this.props.setFilter("");
+    }
   }
 }
 
-export default App;
+export default connect((state) => ({
+  filter: state.ui.filter,
+  wrap: state.ui.wrap,
+  evaluate: state.repl.evaluate,
+  code: state.repl.code
+}), {
+  setWrap,
+  setCode,
+  setEvaluate,
+  setFilter
+})(App);

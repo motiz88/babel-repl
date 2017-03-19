@@ -8,12 +8,23 @@ body {
   overflow: hidden;
 }
 
+input[type="checkbox"] {
+  margin-right: 0.2em;
+}
+
 .dialog {
   z-index: 5;
 }
 
 .repl {
 	display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.repl-horiz {
+  display: flex;
+  flex-direction: row;
 }
 
 .repl-options {
@@ -22,17 +33,22 @@ body {
   height: 100vh;
 }
 
-.repl-options h3 {
-  font-size: 1em;
+h3 {
+  font-size: 14px;
 }
 
-.repl-options h3,
-.repl-options ul {
+h4 {
+  font-size: 13px;
+}
+
+h3,
+h4,
+ul {
   margin-top: .5em;
   margin-bottom: .5em;
 }
 
-.repl-options ul {
+ul {
   padding: 0;
   list-style: none;
 }
@@ -75,4 +91,27 @@ body {
 
 .editor-wrapper {
   flex-grow: 1;
+}
+
+.repl-top-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: .5em;
+  background: black;
+  color: white;
+}
+
+.repl-top-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.repl-top-options li {
+  margin-right: .5em;
+}
+
+.filter-input {
+  width: 100%;
 }

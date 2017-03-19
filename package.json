@@ -22,9 +22,13 @@
     "react-document-title": "^2.0.2",
     "react-dom": "^15.4.2",
     "react-object": "^2.1.1",
+    "react-redux": "^5.0.3",
     "react-schema": "^2.0.0",
     "react-sizeme": "^2.2.0",
-    "react-splitter-layout": "^0.2.1"
+    "react-splitter-layout": "^0.2.1",
+    "redux": "^3.6.0",
+    "redux-actions": "^2.0.1",
+    "redux-localstorage": "^0.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

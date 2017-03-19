@@ -7,6 +7,8 @@ export const PRESETS = getPresets(Babel);
 export const CONTAINING_PRESETS = getContainingPresets(Babel);
 export const PRESET_NAMES = Object.keys(PRESETS);
 export const VERSION = Babel.version;
+export const PLUGIN_GROUP_NAMES = ["transform-es2015", "transform-react", "transform", "syntax"];
+export const PLUGIN_GROUPS = getPluginGroups(PLUGINS, PLUGIN_GROUP_NAMES);
 
 function getPlugins (Babel) {
   return Object.keys(Babel.availablePlugins);
@@ -88,4 +90,22 @@ function getContainingPresets (Babel) {
     }
   }
   return CONTAINING_PRESETS;
+}
+
+function getPluginGroups (plugins, groupNames) {
+  plugins = [...plugins];
+  const groups = {};
+  for (const group of groupNames) {
+    const groupPlugins = plugins.filter((plugin) => plugin.startsWith(group + "-"));
+    groups[group] = {
+      label: group,
+      items: groupPlugins.map((plugin) => ({value: plugin, label: plugin.substring((group + "-").length)}))
+    };
+    plugins = plugins.filter((plugin) => !plugin.startsWith(group + "-"));
+  }
+  groups["misc"] = {
+    label: "Misc",
+    items: plugins
+  };
+  return groups;
 }
