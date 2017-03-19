@@ -19,6 +19,8 @@ export const CONTAINING_PRESETS = {
 
 export const PRESET_NAMES = Object.keys(PRESETS);
 
+export const VERSION = Babel.version;
+
 function getPluginName (plugin) {
   if (typeof plugin === "string") {
     return plugin;

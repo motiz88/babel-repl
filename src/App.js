@@ -5,7 +5,7 @@ import SelectableList from "./SelectableList";
 import Repl from "./Repl";
 import persistence from "./persistence";
 import mergeOptions from "./mergeOptions";
-import { PRESETS, PLUGINS, PRESET_NAMES, CONTAINING_PRESETS } from "./data";
+import { PRESETS, PLUGINS, PRESET_NAMES, CONTAINING_PRESETS, VERSION } from "./data";
 import _ from "lodash";
 import "./App.css";
 
@@ -19,6 +19,7 @@ class App extends Component {
     plugins: {},
     code: INIT,
     options: {},
+    version: VERSION
   }
 
   render() {
@@ -37,6 +38,7 @@ class App extends Component {
 
         <div className="repl-options">
           <button onClick={this.showConfig}>Gen</button>
+          <h3>Babel {this.state.version}</h3>
           <h3>Presets</h3>
           <SelectableList
             items={PRESET_NAMES}
