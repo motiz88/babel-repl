@@ -7,7 +7,6 @@ import GroupedSelectableList from "./GroupedSelectableList";
 import Repl from "./Repl";
 import persistence from "./persistence";
 import mergeOptions from "./mergeOptions";
-import { PRESETS, PRESET_NAMES, CONTAINING_PRESETS, VERSION, PLUGIN_GROUPS } from "./data";
 import _ from "lodash";
 import "./App.css";
 import { connect } from "react-redux";
@@ -18,15 +17,14 @@ class App extends Component {
   state = {
     presets: {},
     plugins: {},
-    options: {},
-    version: VERSION
+    options: {}
   }
 
   render() {
     const presets = this.selectedPresets();
     const plugins = this.selectedPlugins();
-    const { code, wrap, evaluate, setCode, filter } = this.props;
-    const { options, version } = this.state;
+    const { code, wrap, evaluate, setCode, filter, version } = this.props;
+    const { options } = this.state;
 
     return (
       <DocumentTitle title={`Babel ${version} REPL`}>
@@ -75,10 +73,10 @@ class App extends Component {
               />
               <h3>Presets</h3>
               <SelectableList
-                items={PRESET_NAMES}
+                items={this.props.presetNames}
                 selected={this.state.presets}
                 disabled={presets.reduce((carry, curr) => (
-                  [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
+                  [ ...carry, ...(this.props.containingPresets[curr] || []) ]
                 ), [])}
                 onItemToggle={this.togglePreset}
                 options={options}
@@ -89,10 +87,10 @@ class App extends Component {
 
               <h3>Plugins</h3>
               <GroupedSelectableList
-                groups={PLUGIN_GROUPS}
+                groups={this.props.pluginGroups}
                 selected={this.state.plugins}
                 disabled={presets.reduce((carry, curr) => (
-                  [ ...carry, ...PRESETS[curr] ]
+                  [ ...carry, ...this.props.presets[curr] ]
                 ), [])}
                 onItemToggle={this.togglePlugin}
                 options={options}
@@ -170,8 +168,8 @@ class App extends Component {
       presets: _.omit({
         ...state.presets,
         [preset]: !state.presets[preset],
-      }, CONTAINING_PRESETS[preset]),
-      plugins: _.omit(state.plugins, PRESETS[preset]),
+      }, this.props.containingPresets[preset]),
+      plugins: _.omit(state.plugins, this.props.presets[preset]),
     }));
   }
 
@@ -228,7 +226,13 @@ export default connect((state) => ({
   filter: state.ui.filter,
   wrap: state.ui.wrap,
   evaluate: state.repl.evaluate,
-  code: state.repl.code
+  code: state.repl.code,
+  plugins: state.babel.plugins,
+  presets: state.babel.presets,
+  containingPresets: state.babel.containingPresets,
+  presetNames: state.babel.presetNames,
+  version: state.babel.version,
+  pluginGroups: state.babel.pluginGroups
 }), {
   setWrap,
   setCode,

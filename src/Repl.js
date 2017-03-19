@@ -6,6 +6,7 @@ import OutputPane from "./OutputPane";
 import transformer from "./transformer";
 import evaluator from "./evaluator";
 import Splitter from "react-splitter-layout";
+import { connect } from "react-redux";
 
 let previous = { output: "", evaluated: "" };
 
@@ -27,8 +28,8 @@ const run = (input, { evaluate }) => {
   }
 };
 
-const Repl = ({ code, onChange, presets, plugins, options, wrap, evaluate }: Props) => {
-  const { output, evaluated, error } = run({ code, presets, plugins, options }, { evaluate });
+const Repl = ({ Babel, code, onChange, presets, plugins, options, wrap, evaluate }: Props) => {
+  const { output, evaluated, error } = run({ Babel, code, presets, plugins, options }, { evaluate });
 
   return (
     <div className="repl-main">
@@ -46,4 +47,6 @@ const Repl = ({ code, onChange, presets, plugins, options, wrap, evaluate }: Pro
   );
 };
 
-export default Repl;
+export default connect(
+  (state) => ({Babel: state.babel.babel})
+)(Repl);
