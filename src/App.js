@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
+import DocumentTitle from "react-document-title";
 import SelectableList from "./SelectableList";
 import Repl from "./Repl";
 import persistence from "./persistence";
@@ -47,6 +48,7 @@ class App extends Component {
               [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
             ), [])}
             onItemToggle={this.togglePreset}
+      <DocumentTitle title={`Babel ${version} REPL`}>
             options={options}
             onOptionToggle={this.togglePresetOption}
             onOptionChange={this.handlePresetOptionChanged}
@@ -73,6 +75,7 @@ class App extends Component {
         />
 
       </div>
+      </DocumentTitle>
     );
   }
 
