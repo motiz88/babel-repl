@@ -1,8 +1,6 @@
 // @flow
 
-import prettyFormat from "pretty-format";
-
-const evaluate = (code: string): string => {
+const evaluate = (code: string): Array => {
   const capturingConsole = Object.create(console);
   let buffer = [];
   let done = false;
@@ -18,8 +16,8 @@ const evaluate = (code: string): string => {
     }
   };
 
-  const capture = (...args) => {
-    write(args.map((line) => prettyFormat(line)).join(" "));
+  const capture = (key, ...args) => {
+    write({type: key, values: args});
   };
 
   capturingConsole.clear = () => {
@@ -31,19 +29,19 @@ const evaluate = (code: string): string => {
   ["error", "log", "info", "debug"].forEach((key) => {
     capturingConsole[key] = (...args) => {
       console[key](...args);
-      capture(...args);
+      capture(key, ...args);
     };
   });
 
   try {
     new Function("console", code)(capturingConsole); // eslint-disable-line no-new-func
   } catch (err) {
-    buffer.push(err.message);
+    buffer.push({type: "error", values: [err]});
   }
 
   done = true;
 
-  return buffer.join("\n");
+  return buffer;
 };
 
 export default evaluate;

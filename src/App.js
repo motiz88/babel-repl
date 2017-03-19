@@ -20,61 +20,81 @@ class App extends Component {
     plugins: {},
     code: INIT,
     options: {},
-    version: VERSION
+    version: VERSION,
+    evaluate: true,
+    wrap: true
   }
 
   render() {
     const presets = this.selectedPresets();
     const plugins = this.selectedPlugins();
-    const { options } = this.state;
+    const { options, wrap, evaluate, version } = this.state;
 
     return (
-      <div className="repl">
-        {this.state.showConfig && (
-          <dialog open={true} className="dialog">
-            <button onClick={this.hideConfig}>Close</button>
-            <pre>{this.generateConfig()}</pre>
-          </dialog>
-        )}
-
-        <div className="repl-options">
-          <button onClick={this.showConfig}>Gen</button>
-          <h3>Babel {this.state.version}</h3>
-          <h3>Presets</h3>
-          <SelectableList
-            items={PRESET_NAMES}
-            selected={this.state.presets}
-            disabled={presets.reduce((carry, curr) => (
-              [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
-            ), [])}
-            onItemToggle={this.togglePreset}
       <DocumentTitle title={`Babel ${version} REPL`}>
+        <div className="repl">
+          {this.state.showConfig && (
+            <dialog open={true} className="dialog">
+              <button onClick={this.hideConfig}>Close</button>
+              <pre>{this.generateConfig()}</pre>
+            </dialog>
+          )}
+
+          <div className="repl-options">
+            <button onClick={this.showConfig}>Gen</button>
+            <div>
+              <input
+                type="checkbox"
+                checked={evaluate}
+                onChange={this.handleEvaluateChanged}
+              />
+              Evaluate
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                checked={wrap}
+                onChange={this.handleWrapChanged}
+              />
+              Wrap
+            </div>
+            <h3>Babel {version}</h3>
+            <h3>Presets</h3>
+            <SelectableList
+              items={PRESET_NAMES}
+              selected={this.state.presets}
+              disabled={presets.reduce((carry, curr) => (
+                [ ...carry, ...(CONTAINING_PRESETS[curr] || []) ]
+              ), [])}
+              onItemToggle={this.togglePreset}
+              options={options}
+              onOptionToggle={this.togglePresetOption}
+              onOptionChange={this.handlePresetOptionChanged}
+            />
+
+            <h3>Plugins</h3>
+            <SelectableList
+              items={PLUGINS}
+              selected={this.state.plugins}
+              disabled={presets.reduce((carry, curr) => (
+                [ ...carry, ...PRESETS[curr] ]
+              ), [])}
+              onItemToggle={this.togglePlugin}
+              options={options}
+            />
+          </div>
+
+          <Repl
+            code={this.state.code}
+            presets={presets}
+            plugins={plugins}
             options={options}
-            onOptionToggle={this.togglePresetOption}
-            onOptionChange={this.handlePresetOptionChanged}
+            evaluate={evaluate}
+            wrap={wrap}
+            onChange={(code) => this.setState({ code })}
           />
 
-          <h3>Plugins</h3>
-          <SelectableList
-            items={PLUGINS}
-            selected={this.state.plugins}
-            disabled={presets.reduce((carry, curr) => (
-              [ ...carry, ...PRESETS[curr] ]
-            ), [])}
-            onItemToggle={this.togglePlugin}
-            options={options}
-          />
         </div>
-
-        <Repl
-          code={this.state.code}
-          presets={presets}
-          plugins={plugins}
-          options={options}
-          onChange={(code) => this.setState({ code })}
-        />
-
-      </div>
       </DocumentTitle>
     );
   }
@@ -167,6 +187,14 @@ class App extends Component {
     }
 
     return JSON.stringify(config, null, 2);
+  }
+
+  handleEvaluateChanged = (event) => {
+    this.setState({ evaluate: event.target.checked });
+  }
+
+  handleWrapChanged = (event) => {
+    this.setState({ wrap: event.target.checked });
   }
 }
 

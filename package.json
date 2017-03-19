@@ -14,12 +14,18 @@
   },
   "dependencies": {
     "brace": "^0.10.0",
+    "js-util": "^2.0.9",
     "lodash": "^4.16.4",
     "pretty-format": "^19.0.0",
     "react": "^15.4.2",
     "react-ace": "^4.1.6",
+    "react-atoms": "^2.0.11",
     "react-document-title": "^2.0.2",
     "react-dom": "^15.4.2",
+    "react-object": "^2.1.1",
+    "react-schema": "^2.0.0",
+    "react-sizeme": "^2.2.0",
+    "react-splitter-layout": "^0.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
