@@ -16,7 +16,6 @@
     "brace": "^0.10.0",
     "js-util": "^2.0.9",
     "lodash": "^4.16.4",
-    "pretty-format": "^19.0.0",
     "react": "^15.4.2",
     "react-ace": "^4.1.6",
     "react-atoms": "^2.0.11",
