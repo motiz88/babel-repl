@@ -25,7 +25,7 @@ function getPluginName (Babel, plugin) {
 
 function getPresetPlugins (Babel, preset) {
   if (Array.isArray(preset.plugins)) {
-    return preset.plugins.map(plugin => getPluginName(Babel, plugin));
+    return preset.plugins.map((plugin) => getPluginName(Babel, plugin));
   } else if (typeof preset === "function") {
     return getPresetPlugins(Babel, preset());
   }
@@ -60,10 +60,10 @@ function getContainingPresets (Babel) {
     if (cache.has(preset)) {
       return cache.get(preset);
     }
-    if (typeof preset === 'function') {
+    if (typeof preset === "function") {
       preset = preset();
     }
-    if (!preset || typeof preset !== 'object' || !preset.presets) {
+    if (!preset || typeof preset !== "object" || !preset.presets) {
       return [];
     }
     const result = [];
