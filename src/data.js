@@ -2,37 +2,44 @@
 
 const { Babel } = window;
 
-export const PLUGINS = Object.keys(Babel.availablePlugins);
-export const PRESETS = {};
-
-for (const key of Object.keys(Babel.availablePresets)) {
-  const preset = Babel.availablePresets[key];
-  PRESETS[key] = getPresetPlugins(preset);
-}
-
-
+export const PLUGINS = getPlugins(Babel);
+export const PRESETS = getPresets(Babel);
 export const CONTAINING_PRESETS = getContainingPresets(Babel);
 export const PRESET_NAMES = Object.keys(PRESETS);
-
 export const VERSION = Babel.version;
 
-function getPluginName (plugin) {
+function getPlugins (Babel) {
+  return Object.keys(Babel.availablePlugins);
+}
+
+function getPluginName (Babel, plugin) {
+  const { availablePlugins } = Babel;
   if (typeof plugin === "string") {
     return plugin;
   }
   if (Array.isArray(plugin)) {
-    return getPluginName(plugin[0]);
+    return getPluginName(Babel, plugin[0]);
   }
-  return PLUGINS.find((name) => Babel.availablePlugins[name] ===  plugin);
+  return PLUGINS.find((name) => availablePlugins[name] ===  plugin);
 }
 
-function getPresetPlugins (preset) {
+function getPresetPlugins (Babel, preset) {
   if (Array.isArray(preset.plugins)) {
-    return preset.plugins.map(getPluginName);
+    return preset.plugins.map(plugin => getPluginName(Babel, plugin));
   } else if (typeof preset === "function") {
-    return getPresetPlugins(preset());
+    return getPresetPlugins(Babel, preset());
   }
   return [];
+}
+
+function getPresets (Babel) {
+  const { availablePresets } = Babel;
+  const PRESETS = {};
+  for (const key of Object.keys(availablePresets)) {
+    const preset = availablePresets[key];
+    PRESETS[key] = getPresetPlugins(Babel, preset);
+  }
+  return PRESETS;
 }
 
 function getContainingPresets (Babel) {
