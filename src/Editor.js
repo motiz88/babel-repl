@@ -5,6 +5,7 @@ import ReactAce from "react-ace";
 import "brace/mode/javascript";
 import "brace/theme/tomorrow";
 import SizeMe from "react-sizeme";
+import styled from "styled-components";
 
 type Props = {
   name: string,
@@ -12,6 +13,10 @@ type Props = {
   onChange?: (value: string) => any,
   wrap: boolean
 }
+
+const Container = styled.div `
+  flex-grow: 1
+`;
 
 class Editor extends React.Component<Props> {
   static defaultProps = {
@@ -32,7 +37,7 @@ class Editor extends React.Component<Props> {
   render() {
     const { name, value, onChange, wrap } = this.props;
     return (
-      <div className="editor-wrapper">
+      <Container>
         <ReactAce
           style={{
             position: "absolute",
@@ -58,7 +63,7 @@ class Editor extends React.Component<Props> {
           }}
           wrapEnabled={wrap}
         />
-      </div>
+      </Container>
     );
   }
 }

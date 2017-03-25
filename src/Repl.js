@@ -7,6 +7,7 @@ import transformer from "./transformer";
 import evaluator from "./evaluator";
 import Splitter from "react-splitter-layout";
 import { connect } from "react-redux";
+import styled from "styled-components";
 
 let previous = { output: "", evaluated: "" };
 
@@ -28,22 +29,50 @@ const run = (input, { evaluate }) => {
   }
 };
 
+const Container = styled.div `
+  flex: 1;
+  display: flex;
+  position: relative;
+`;
+
+const Column = styled.div `
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: stretch;
+
+  textarea {
+    flex: 1;
+    outline: none;
+    border: 1px solid #f1f1f1;
+  }
+`;
+
+const ErrorBox = styled.pre `
+  color: #c7254e;
+  font-size: 10px;
+  margin: 0;
+  padding: .5em;
+  background: #f1f1f1;
+`;
+
 const Repl = ({ Babel, code, onChange, presets, plugins, options, wrap, evaluate }: Props) => {
   const { output, evaluated, error } = run({ Babel, code, presets, plugins, options }, { evaluate });
 
   return (
-    <div className="repl-main">
-      <Splitter vertical={false} customClassName="xyz">
-          <div className="repl-box repl-input">
+    <Container>
+      <Splitter vertical={false}>
+          <Column>
               <Editor value={code} name="input-editor" onChange={onChange} wrap={wrap} />
-              {error && <pre className="error output-box">{error}</pre>}
-          </div>
-          <div className="repl-box repl-output">
+              {error && <ErrorBox>{error}</ErrorBox>}
+          </Column>
+          <Column>
               <Editor value={output} name="output-editor" wrap={wrap} />
               {evaluated && <OutputPane value={evaluated} />}
-          </div>
+          </Column>
       </Splitter>
-    </div>
+    </Container>
   );
 };
 

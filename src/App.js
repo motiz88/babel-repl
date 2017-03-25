@@ -8,10 +8,68 @@ import Repl from "./Repl";
 import persistence from "./persistence";
 import mergeOptions from "./mergeOptions";
 import _ from "lodash";
-import "./App.css";
 import { connect } from "react-redux";
 import { setCode, setEvaluate } from "./state/repl/actions";
 import { setWrap, setFilter } from "./state/ui/actions";
+import styled from "styled-components";
+import Checkbox from "./Checkbox";
+
+const Container = styled.div`
+	display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const TopBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: .5em;
+  background: black;
+  color: white;
+`;
+
+const TopOptions = styled.ul`
+  padding: 0;
+  list-style: none;
+  margin-top: .5em;
+  margin-bottom: .5em;
+  display: block;
+
+  li {
+    display: inline-block;
+    margin-right: .5em;
+  }
+
+  label {
+    display: block;
+  }
+`;
+
+const HorizontalLayout = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-basis: 50vh;
+  flex-grow: 1;
+`;
+
+const AddonsPane = styled.div `
+  flex-basis: 200px;
+  overflow: scroll;
+`;
+
+const Dialog = styled.dialog `
+  z-index: 5;
+`;
+
+const WideInput = styled.input `
+  width: 100%
+`;
 
 class App extends Component {
   state = {
@@ -28,19 +86,18 @@ class App extends Component {
 
     return (
       <DocumentTitle title={`Babel ${version} REPL`}>
-        <div className="repl">
+        <Container>
           {this.state.showConfig && (
-            <dialog open={true} className="dialog">
+            <Dialog open={true}>
               <button onClick={this.hideConfig}>Close</button>
               <pre>{this.generateConfig()}</pre>
-            </dialog>
+            </Dialog>
           )}
-          <div className="repl-top-bar">
-            <ul className="repl-top-options">
+          <TopBar>
+            <TopOptions>
               <li>
                 <label>
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={evaluate}
                     onChange={this.handleEvaluateChanged}
                   />
@@ -49,25 +106,23 @@ class App extends Component {
               </li>
               <li>
                 <label>
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={wrap}
                     onChange={this.handleWrapChanged}
                   />
                   Line Wrap
                 </label>
               </li>
-            </ul>
+            </TopOptions>
             <h3>Babel {version}</h3>
-          </div>
-          <div className="repl-horiz">
-            <div className="repl-options">
+          </TopBar>
+          <HorizontalLayout>
+            <AddonsPane>
               <button onClick={this.showConfig}>Gen</button>
-              <input
+              <WideInput
                 type="text"
                 value={filter}
                 onChange={this.handleFilterChanged}
-                className="filter-input"
                 placeholder="Filter..."
                 onKeyUp={this.handleFilterKeyUp}
               />
@@ -96,7 +151,7 @@ class App extends Component {
                 options={options}
                 filter={filter}
               />
-            </div>
+            </AddonsPane>
 
             <Repl
               code={code}
@@ -107,8 +162,8 @@ class App extends Component {
               wrap={wrap}
               onChange={setCode}
             />
-          </div>
-        </div>
+          </HorizontalLayout>
+        </Container>
       </DocumentTitle>
     );
   }

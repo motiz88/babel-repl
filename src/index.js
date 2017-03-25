@@ -4,9 +4,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import configureStore from "./state/configureStore";
-import "./index.css";
+import "./globalStyles";
 import { Provider } from "react-redux";
-
 import { loadStandalone } from "./state/babel/actions";
 
 const store = configureStore();

@@ -2,6 +2,8 @@
 
 import React from "react";
 import { match } from "./filterUtils";
+import Checkbox from "./Checkbox";
+import styled from "styled-components";
 
 type Props = {
   items: string[],
@@ -30,7 +32,7 @@ const OptionsList = ({ item, options, onOptionToggle, onOptionChange }) => {
 
   return (
     <div style={{ display: "inline" }}>
-      <input type="checkbox" checked={enabled} onChange={() => onOptionToggle(value)} />
+      <Checkbox checked={enabled} onChange={() => onOptionToggle(value)} />
       {enabled && (
         <textarea
           defaultValue={options.value ? JSON.stringify(options.value) : ""}
@@ -45,12 +47,12 @@ const ListItem = ({ disabled, selected, onClick, item, options, onOptionToggle, 
   const { value, label } = normaliseItem(item);
   return disabled ? (
     <li>
-			<input type="checkbox" checked disabled />
+			<Checkbox checked disabled />
 			<label>{label}</label>
     </li>
   ) : (
     <li>
-      <input type="checkbox" checked={selected} onChange={() => onClick(value)} />
+      <Checkbox checked={selected} onChange={() => onClick(value)} />
       <label onClick={() => onClick(value)}>{label}</label>
       {selected && (
         <OptionsList
@@ -64,6 +66,13 @@ const ListItem = ({ disabled, selected, onClick, item, options, onOptionToggle, 
   );
 };
 
+const List = styled.ul `
+  padding: 0;
+  list-style: none;
+  margin-top: .5em;
+  margin-bottom: .5em;
+`;
+
 const SelectableList = ({
   items,
   selected,
@@ -74,7 +83,7 @@ const SelectableList = ({
   onOptionChange,
   filter
 }: Props) => (
-	<ul>
+	<List>
 		{items.map((opt) => {
   const { value } = normaliseItem(opt);
   if (filter && !itemMatchesFilter(opt, filter)) {
@@ -93,7 +102,7 @@ const SelectableList = ({
         />
   );}
     )}
-	</ul>
+	</List>
 );
 
 export default SelectableList;
